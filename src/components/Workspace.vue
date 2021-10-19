@@ -52,16 +52,21 @@
                                         </b-card-text>
                                     </b-col>
                                 </b-row>
-                                <b-row
-                                    v-for="severity in Object.keys(files[obfuscation])" :key="severity">
-                                    <b-col v-for="file in files[obfuscation][severity]" :key="file">
-                                        <File
-                                            :filename=file
-                                            :section=obfuscation
-                                            :severity=severity
-                                            @fileSelected="fileSelectedEvent"
-                                        >
-                                        </File>
+                                <b-row>
+                                    <b-col v-for="severity in Object.keys(files[obfuscation])" :key="severity">
+                                        <b-card-title>{{ severity }}</b-card-title>
+                                        <b-row>
+                                            <b-col >
+                                                <File v-for="file in files[obfuscation][severity]" :key="file" style="margin: 4px"
+                                                    :filename=file
+                                                    :section=obfuscation
+                                                    :severity=severity
+                                                    @fileSelected="fileSelectedEvent"
+
+                                                >
+                                                </File>
+                                            </b-col>
+                                        </b-row>
                                     </b-col>
                                 </b-row>
                             </b-col>
@@ -246,8 +251,8 @@ export default {
 
             let requestMessage = "Requested classification for ";
             requestMessage += this.get_string_message_for_file(filename, section, severity);
-            requestMessage += " by the model '" + model + "'";
-            this.messages.push(requestMessage);
+            requestMessage += " by the model '" + model.toString().toUpperCase() + "'";
+            this.addMessage(requestMessage);
 
             axios({
                 method: 'post',
@@ -257,19 +262,27 @@ export default {
                 this.fileUploaded = null;
                 console.log("FILE CLASSIFIED: ", response);
                 let responseMessage = this.get_string_message_for_file(filename, section, severity);
-                responseMessage += ", has been classified as " + response.data + " by the model'" + model + "'";
-                this.messages.push(responseMessage);
+                responseMessage += ", has been classified as " + response.data.toString().toUpperCase() + " by the model'" + model.toString().toUpperCase() + "'";
+                this.addMessage(responseMessage);
 
             }).catch(error => {
                 console.log("ERROR: ", error);
             });
         },
         get_string_message_for_file(filename, section, severity) {
-            let message = "File '" + filename + "', Section '" + section + "'";
+            let message = "File '" + filename.toString().toUpperCase() + "', Section '" + section.toString().toUpperCase() + "'";
             if (severity !== null) {
-                message += ", Severity '" + severity + "'";
+                message += ", Severity '" + severity.toString().toUpperCase() + "'";
             }
             return message
+
+        },
+        addMessage(message){
+
+            if(this.messages.length > 2){
+                this.messages = this.messages.slice(this.messages.length-2, 3)
+            }
+            this.messages.push(message);
 
         }
 
