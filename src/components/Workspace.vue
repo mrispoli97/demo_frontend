@@ -1,6 +1,19 @@
 <template>
     <div class="WorkSpace">
         <h1>WORK SPACE</h1>
+        <b-button v-if="messages.length > 1"
+                  variant="outline-primary"
+                  size="sm"
+                  style="margin-bottom: 10px"
+                  @click.prevent="messages=[]"
+        >
+            close all
+        </b-button>
+        <Logging
+            :messages="messages"
+        >
+
+        </Logging>
         <b-card
             style="min-height: 300px; color: goldenrod"
             class=""
@@ -13,7 +26,7 @@
                                 <b-row>
                                     <b-col>
                                         <b-card-text>
-                                            <b-card-title><b>ORIGINAL</b></b-card-title>
+                                            <b-card-title><b>YOUR FILES</b></b-card-title>
                                         </b-card-text>
                                     </b-col>
                                 </b-row>
@@ -129,14 +142,16 @@
 
 import File from './File';
 import Classification from './Classification';
+import Logging from "./Logging";
 import axios from "axios";
 
 export default {
     name: 'WorkSpace',
-    components: {Classification, File},
+    components: {Logging, Classification, File},
     comments: {
         File,
         Classification,
+        Logging,
     },
     props: {
         msg: String
@@ -155,6 +170,8 @@ export default {
             workSpaceIsActive: true,
             classificationIsActive: false,
             obfuscationIsActive: false,
+
+            messages: []
         }
     },
     created() {
@@ -217,12 +234,21 @@ export default {
         },
         classify(event) {
             let data = new FormData();
-            data.append("filename", this.fileIsSelected.filename);
-            data.append("section", this.fileIsSelected.section);
-            data.append("severity", this.fileIsSelected.severity);
-            data.append("model", event['name']);
+            let filename = this.fileIsSelected.filename;
+            let section = this.fileIsSelected.section;
+            let severity = this.fileIsSelected.severity;
+            let model = event['name'];
 
-            console.log("CLASSIFICATION REQUEST", data);
+            data.append("filename", filename);
+            data.append("section", section);
+            data.append("severity", severity);
+            data.append("model", model);
+
+            let requestMessage = "Requested classification for ";
+            requestMessage += this.get_string_message_for_file(filename, section, severity);
+            requestMessage += " by the model '" + model + "'";
+            this.messages.push(requestMessage);
+
             axios({
                 method: 'post',
                 url: 'classify',
@@ -230,10 +256,21 @@ export default {
             }).then(response => {
                 this.fileUploaded = null;
                 console.log("FILE CLASSIFIED: ", response);
+                let responseMessage = this.get_string_message_for_file(filename, section, severity);
+                responseMessage += ", has been classified as " + response.data + " by the model'" + model + "'";
+                this.messages.push(responseMessage);
 
             }).catch(error => {
                 console.log("ERROR: ", error);
             });
+        },
+        get_string_message_for_file(filename, section, severity) {
+            let message = "File '" + filename + "', Section '" + section + "'";
+            if (severity !== null) {
+                message += ", Severity '" + severity + "'";
+            }
+            return message
+
         }
 
 
