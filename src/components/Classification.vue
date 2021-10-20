@@ -1,30 +1,33 @@
 <template>
-    <b-row class="Classification" style="margin-top: 30px">
-        <b-col>
-            <b-row style="margin-top:30px;">
+    <b-row class="Classification" style="margin: 20px">
+        <b-col style="justify-content: center">
+            <b-card-title><b>MODELS</b></b-card-title>
+            <b-row style="margin:20px;">
                 <b-col style="display: flex; justify-content: center">
-                    <ClassifierCard v-for="name in MLClassifiers" :key="name" style="margin-left: 30px"
-                                    :name="name"
-                                    :bgColor="colors[name]"
-                                    textColor="black"
-                                    :emoji="emoji[name]"
-                                    @classifierClicked="classifierClicked"
+                    <ButtonCard
+                        v-for="name in MLClassifiers" :key="name" style="margin: 10px"
+                        :name="name"
+                        :bgColor="colors[name]"
+                        :isActive="active[name]"
+                        textColor="black"
+                        @clicked="classifierHasBeenSelected"
+                        class="align-middle"
                     >
-
-                    </ClassifierCard>
+                    </ButtonCard>
                 </b-col>
             </b-row>
-            <b-row style="margin-top:30px;">
+            <b-row style="margin:20px;">
                 <b-col style="display: flex; justify-content: center">
-                    <ClassifierCard v-for="name in DLClassifiers" :key="name" style="margin-left: 30px"
-                                    :name="name"
-                                    :bgColor="colors[name]"
-                                    textColor="black"
-                                    :emoji="emoji[name]"
-                                    @classifierClicked="classifierClicked"
+                    <ButtonCard
+                        v-for="name in DLClassifiers" :key="name" style="margin: 10px"
+                        :name="name"
+                        :bgColor="colors[name]"
+                        :isActive="active[name]"
+                        textColor="black"
+                        @clicked="classifierHasBeenSelected"
+                        class="align-middle"
                     >
-
-                    </ClassifierCard>
+                    </ButtonCard>
                 </b-col>
             </b-row>
         </b-col>
@@ -33,18 +36,22 @@
 
 
 <script>
-import ClassifierCard from './ClassifierCard';
+import ButtonCard from './ButtonCard';
 
 export default {
     name: "Classification",
     components: {
-        ClassifierCard
+        ButtonCard
     },
 
     props: {
         msg: String
     },
-
+    created() {
+        this.$emit('classifierSelected', {
+            'classifier': 'LightGBM',
+        });
+    },
     data() {
         return {
             MLClassifiers: ['LightGBM', 'Random Forest', 'XGBoost'],
@@ -52,27 +59,35 @@ export default {
             colors: {
                 'LightGBM': "#42a5f5",
                 'Random Forest': "#c44536",
-                'XGBoost': "#ffddd2",
+                'XGBoost': "#ff4d6d",
                 'MobileNet': "#ff9500",
-                'ResNet': "#a2e23b",
-                'VGG': "#867bb0",
-                'Xception': "#9c6644"
+                'ResNet': "#55db02",
+                'VGG': "#7209b7",
+                'Xception': "#582f0e"
             },
-            emoji: {
-                'LightGBM': "&#127809;",
-                'Random Forest': "&#127795;",
-                'XGBoost': "&#127845;",
-                'MobileNet': "&#127850;",
-                'ResNet': "&#127880;",
-                'VGG': "&#127917;",
-                'Xception': "&#127808;"
+            active: {
+                'LightGBM': true,
+                'Random Forest': false,
+                'XGBoost': false,
+                'MobileNet': false,
+                'ResNet': false,
+                'VGG': false,
+                'Xception': false
             }
         }
     },
     methods: {
-        classifierClicked(event){
+        classifierHasBeenSelected(event) {
+            let classifierSelected = event["name"];
+            this.MLClassifiers.concat(this.DLClassifiers).forEach(classifier => {
+                if (classifierSelected === classifier) {
+                    this.active[classifierSelected] = true;
+                } else {
+                    this.active[classifier] = false;
+                }
+            });
             this.$emit('classifierSelected', {
-                "name": event["name"],
+                'classifier': classifierSelected,
             });
         }
     }

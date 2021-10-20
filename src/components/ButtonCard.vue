@@ -3,17 +3,14 @@
         <b-col>
             <b-row>
                 <b-col>
-                    <b-button
-                        pill
-                        size="lg"
-                        class="btn-circle"
-                        :style="propStyles"
-                        @click.prevent="clickEvent"
+                    <FocusButton
+                        :name="name"
+                        :color="bgColor"
+                        :text-color="textColor"
+                        :isActive="isActive"
+                        @clicked="clickEvent"
                     >
-                    </b-button>
-                    <p v-html="emoji" class="emoji" style="margin-top: -45px;"
-                        @click.prevent="clickEvent"
-                    ></p>
+                    </FocusButton>
                 </b-col>
             </b-row>
             <b-row style="margin-top: 40px">
@@ -26,15 +23,19 @@
 </template>
 
 <script>
+import FocusButton from "@/components/FocusButton";
+
 export default {
-    name: "ClassifierCard",
-    components: {},
+    name: "ButtonCard",
+    components: {
+        FocusButton
+    },
 
     props: {
         name: String,
         bgColor: String,
         textColor: String,
-        emoji: String
+        isActive: Boolean,
 
     },
     created() {
@@ -53,24 +54,14 @@ export default {
     },
     methods: {
         clickEvent() {
-            this.$emit('classifierClicked', {
+            this.$emit('clicked', {
                 'name': this.name,
             });
-        }
+        },
     }
 }
 </script>
 
 <style scoped>
 
-.emoji:hover {
-    cursor: pointer;
-}
-
-.btn-circle {
-    width: 70px;
-    height: 70px;
-    padding: 7px 10px;
-    border-radius: 25px;
-}
 </style>

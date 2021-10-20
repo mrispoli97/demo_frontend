@@ -1,8 +1,10 @@
 <template>
     <b-btn class="File"
-           variant="dark"
+           :variant="getTheme()"
            size="sm"
            @click.prevent="clickEvent"
+           @mouseover="mouseOver"
+           @mouseout="mouseOut"
     >
         <b-row>
             <b-col>
@@ -21,25 +23,42 @@
 export default {
     name: "File",
     props: {
+        identifier: String,
         filename: String,
-        section: String,
-        severity: {
-            type: String,
-            default: null,
+        isActive: Boolean,
+    },
+    watch: {
+        isActive: function (newVal) { // watch it
+            if (newVal) {
+                this.theme = 'light';
+            } else {
+                this.theme = 'dark';
+            }
         }
     },
     data() {
         return {
-            imageURL: "https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX9748777.jpg",
+            theme: "dark"
         }
     },
+
     methods: {
-        clickEvent(){
+        clickEvent() {
             this.$emit('fileSelected', {
                 'filename': this.filename,
-                'section': this.section,
-                'severity': this.severity
+                'identifier': this.identifier,
             });
+        },
+        getTheme() {
+            return this.theme;
+        },
+        mouseOut() {
+            if (!this.isActive) {
+                this.theme = "dark";
+            }
+        },
+        mouseOver() {
+            this.theme = "light";
         }
     }
 }
