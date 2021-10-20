@@ -1,16 +1,20 @@
 <template>
+    <div>
+        <b-button
+            pill
+            class="btn-circle"
+            :style="propStyles"
+            :active="isActive"
+            @click="clickEvent"
+            @mouseover="mouseIsOver"
+            @mouseout="mouseOut"
+        >
+            <span v-html="text"></span>
+        </b-button>
 
-    <b-button
-        pill
-        class="btn-circle"
-        :style="propStyles"
-        :active="isActive"
-        @click="clickEvent"
-        @mouseover="mouseIsOver"
-        @mouseout="mouseOut"
-    >
-        {{text}}
-    </b-button>
+    </div>
+
+
 </template>
 
 <script>
@@ -24,7 +28,6 @@ export default {
         textColor: String,
         isActive: Boolean,
         text: {
-            type: String,
             required: false,
             default: "",
         }
@@ -42,9 +45,7 @@ export default {
         }
     },
     data() {
-        return {
-
-        }
+        return {}
     },
     methods: {
         clickEvent() {
@@ -53,26 +54,26 @@ export default {
             });
         },
         getBackgroundColor() {
-            if (this.isActive) {
-                return this.color;
-            } else {
-                return "transparent"
-            }
-        },
-        getBorderColor() {
             if (!this.isActive) {
                 return this.color;
             } else {
                 return "transparent"
             }
         },
-        mouseIsOver(event){
+        getBorderColor() {
+            if (this.isActive) {
+                return this.color;
+            } else {
+                return "transparent"
+            }
+        },
+        mouseIsOver(event) {
             this.$emit('mouseIsOver', {
                 'event': event,
                 'name': this.name,
             });
         },
-        mouseOut(event){
+        mouseOut(event) {
             this.$emit('mouseIsOut', {
                 'event': event,
                 'name': this.name,

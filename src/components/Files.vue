@@ -1,8 +1,8 @@
 <template>
     <b-row>
         <b-col>
-            <b-card-title><b>YOUR FILES</b></b-card-title>
-            <b-row style="margin: 25px">
+            <b-card-title style="margin-top: 25px; margin-bottom: 25px"><b>YOUR FILES</b></b-card-title>
+            <b-row style="margin-top: 25px; margin-bottom: 25px">
                 <b-col v-if="originalFiles.length > 0" style="display: flex; justify-content: center">
                     <File v-for="file in originalFiles" :key="file.filename" style="margin: 4px"
                           :filename=file.filename
@@ -14,12 +14,12 @@
                 </b-col>
             </b-row>
             <b-row v-for="obfuscation in getObfuscationSectionsToShow()" :key=obfuscation
-                   style="margin-bottom: 25px">
+                   style="margin-top: 25px; margin-bottom: 25px">
                 <b-card-title>
                     <b>{{ obfuscation.toUpperCase() }}</b>
                 </b-card-title>
                 <b-col v-for="severity in getSeveritySectionsToShow(obfuscation)" :key="severity">
-                    <b-card-title>{{ severity }}</b-card-title>
+                    <b-card-title><small>{{ severity }}</small></b-card-title>
                     <File v-for="file in obfuscatedFiles[obfuscation][severity]" :key="file.filename"
                           style="margin: 4px"
                           :filename=file.filename
@@ -31,27 +31,26 @@
                 </b-col>
             </b-row>
 
-            <b-row style="margin: 25px;">
-                <b-col>
-                    <b-form-file
-                        v-model="fileUploaded"
-                        :state="Boolean(fileUploaded)"
-                        placeholder="Choose a file or drop it here..."
-                        drop-placeholder="Drop file here..."
-                    ></b-form-file>
-                    <div class="mt-3">Selected file: {{ fileUploaded ? fileUploaded.name : '' }}</div>
-                </b-col>
-                <b-col
-                    style="max-width: 100px"
-                >
+            <b-row style="margin-top: 25px; margin-bottom: 25px">
+                <b-col style="display: flex; justify-content: center">
+                    <div>
+                        <b-form-file
+                            v-model="fileUploaded"
+                            :state="Boolean(fileUploaded)"
+                            placeholder="Choose a file or drop it here..."
+                            drop-placeholder="Drop file here..."
+                        ></b-form-file>
+                        <div class="mt-3">Selected file: {{ fileUploaded ? fileUploaded.name : '' }}</div>
+                    </div>
                     <FocusButton
+                        v-if="Boolean(fileUploaded)"
                         name="uploadFileButton"
                         color="#2dc653"
-                        text="GO"
+                        text="⬆"
                         :isActive="uploadButtonIsActive"
                         @mouseIsOver="uploadButtonIsActive=true"
                         @mouseIsOut="uploadButtonIsActive=false"
-                        style="margin-right: 30px"
+                        @clicked="upload"
                     >
                     </FocusButton>
                 </b-col>
@@ -104,11 +103,9 @@ export default {
             },
 
             fileUploaded: null,
-            fileIsSelected: {
+            fileSelected: {
                 'filename': null,
-                'section': null,
-                'severity': null,
-                'status': false,
+                'identifier': null,
             },
             uploadButtonIsActive: false,
         }
@@ -128,6 +125,29 @@ export default {
             });
         },
         processFiles(files) {
+            this.originalFiles = [];
+            this.obfuscatedFiles = {
+                'zeros': {
+                    '0.01': [],
+                    '0.10': [],
+                    '0.25': []
+                },
+                'random': {
+                    '0.01': [],
+                    '0.10': [],
+                    '0.25': []
+                },
+                'junk': {
+                    '0.01': [],
+                    '0.10': [],
+                    '0.25': []
+                },
+                'benign': {
+                    '0.01': [],
+                    '0.10': [],
+                    '0.25': []
+                },
+            };
             files.forEach(file => {
                 let section = file['section'];
                 if (section === 'original') {
@@ -160,18 +180,34 @@ export default {
         },
         fileSelectedEvent(event) {
             let identifier = event['identifier'];
+            let fileSelected = null;
 
             this.originalFiles.forEach(file => {
-                file.isActive = file.id === identifier;
+                if (file.id === identifier) {
+                    file.isActive = true;
+                    fileSelected = file;
+                }else{
+                    file.isActive = false;
+                }
+
             });
 
-            Object.keys(this.obfuscatedFiles).forEach( obfuscation => {
-                Object.keys(this.obfuscatedFiles[obfuscation]).forEach( severity => {
-                    this.obfuscatedFiles[obfuscation][severity].forEach( file => {
-                        file.isActive = file.id === identifier;
+            Object.keys(this.obfuscatedFiles).forEach(obfuscation => {
+                Object.keys(this.obfuscatedFiles[obfuscation]).forEach(severity => {
+                    this.obfuscatedFiles[obfuscation][severity].forEach(file => {
+                        if (file.id === identifier) {
+                            file.isActive = true;
+                            fileSelected = file;
+                        }else{
+                            file.isActive = false;
+                        }
                     })
                 })
-            })
+            });
+
+            this.$emit('fileSelected', {
+                'file': fileSelected,
+            });
 
         },
         getObfuscationSectionsToShow() {

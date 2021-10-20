@@ -3,11 +3,11 @@
     <b-col>
         <b-alert
             :show="1===1"
-            variant="info"
-            v-for="message in messages" :key="message"
+            :variant="message.variant"
+            v-for="message in messages" :key="message.text"
             dismissible
         >
-            {{ message }}
+            {{ message.text }}
         </b-alert>
     </b-col>
 </b-row>
@@ -17,7 +17,8 @@
 export default {
     name: "Logging",
     props: {
-        messages: Array
+        messages: Array,
+        variant: String,
     }
 }
 </script>

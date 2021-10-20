@@ -1,11 +1,11 @@
 <template>
-    <b-row style="margin-top: 20px">
+    <b-row style="margin-top: 25px; margin-bottom: 25px">
         <b-col>
             <b-card-title><b>OBFUSCATION</b></b-card-title>
             <b-row style="margin: 70px">
                 <b-col style="display: flex; justify-content: center">
                     <ButtonCard
-                        v-for="name in obfuscations" :key="name" style="margin: 10px"
+                        v-for="name in obfuscations" :key="name" style="margin: 15px;"
                         :name="name"
                         :bgColor="colors[name]"
                         :isActive="active[name]"
@@ -16,7 +16,7 @@
                     </ButtonCard>
                 </b-col>
             </b-row>
-            <b-row style="margin: 70px">
+            <b-row style="margin-top: 45px; margin-bottom: 45px">
                 <b-col>
                     <Severity
                         @severitySelected="severityHasBeenSelected"
@@ -63,8 +63,8 @@ export default {
         }
     },
     methods: {
-        severityHasBeenSelected(severity) {
-            this.severity = severity;
+        severityHasBeenSelected(event) {
+            this.severity = event['severity'];
             this.$emit('severitySelected', {
                 'severity': this.severity,
             });

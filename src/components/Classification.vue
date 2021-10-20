@@ -1,11 +1,11 @@
 <template>
-    <b-row class="Classification" style="margin: 20px">
+    <b-row class="Classification" style="margin-top: 25px; margin-bottom: 25px">
         <b-col style="justify-content: center">
             <b-card-title><b>MODELS</b></b-card-title>
             <b-row style="margin:20px;">
                 <b-col style="display: flex; justify-content: center">
                     <ButtonCard
-                        v-for="name in MLClassifiers" :key="name" style="margin: 10px"
+                        v-for="name in MLClassifiers" :key="name" style="margin: 25px;"
                         :name="name"
                         :bgColor="colors[name]"
                         :isActive="active[name]"
@@ -19,7 +19,7 @@
             <b-row style="margin:20px;">
                 <b-col style="display: flex; justify-content: center">
                     <ButtonCard
-                        v-for="name in DLClassifiers" :key="name" style="margin: 10px"
+                        v-for="name in DLClassifiers" :key="name" style="margin: 25px;"
                         :name="name"
                         :bgColor="colors[name]"
                         :isActive="active[name]"
@@ -41,7 +41,7 @@ import ButtonCard from './ButtonCard';
 export default {
     name: "Classification",
     components: {
-        ButtonCard
+        ButtonCard,
     },
 
     props: {
@@ -73,7 +73,7 @@ export default {
                 'ResNet': false,
                 'VGG': false,
                 'Xception': false
-            }
+            },
         }
     },
     methods: {

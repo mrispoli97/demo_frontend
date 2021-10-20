@@ -1,15 +1,15 @@
 <template>
     <b-row>
         <b-col>
-            <b-button variant="outline-success" v-bind:class="{ active: easyIsActive }" style="margin: 3px"
+            <b-button variant="outline-success" v-bind:class="{ active: easyIsActive }" style="margin: 5px;"
                       @click.prevent="easyClicked"
             >Easy
             </b-button>
-            <b-button variant="outline-warning" v-bind:class="{ active: mediumIsActive }" style="margin: 3px"
+            <b-button variant="outline-warning" v-bind:class="{ active: mediumIsActive }" style="margin: 5px;"
                       @click.prevent="mediumClicked"
             >Medium
             </b-button>
-            <b-button variant="outline-danger" v-bind:class="{ active: hardIsActive }" style="margin: 3px"
+            <b-button variant="outline-danger" v-bind:class="{ active: hardIsActive }" style="margin: 5px;"
                       @click.prevent="hardClicked"
             >Strong
             </b-button>
