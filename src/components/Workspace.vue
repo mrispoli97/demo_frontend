@@ -151,16 +151,18 @@ export default {
             let model = this.classifier;
 
             let filename = this.file.filename;
-            let section = this.file.section;
-            let severity = this.file.severity;
+            // let section = this.file.section;
+            // let severity = this.file.severity;
+
+            let label = filename.split("-")[0].replace(" ", "");
 
             data.append("filepath", filepath);
             data.append("model", model);
 
-            let requestMessage = "Requested classification for ";
-            requestMessage += this.get_string_message_for_file(filename, section, severity);
-            requestMessage += ". Model: " + model.toUpperCase() + "";
-            this.messages = this.addMessage(this.messages, requestMessage, 'success');
+            // let requestMessage = "Requested classification for ";
+            // requestMessage += this.get_string_message_for_file(filename, section, severity);
+            // requestMessage += ". Model: " + model.toUpperCase() + "";
+            // this.messages = this.addMessage(this.messages, requestMessage, 'success');
 
             axios({
                 method: 'post',
@@ -168,10 +170,18 @@ export default {
                 data: data,
             }).then(response => {
                 this.fileUploaded = null;
-                let responseMessage = "Response ready\n"
-                responseMessage += this.get_string_message_for_file(filename, section, severity);
-                responseMessage += " family: " + response.data.toString().toUpperCase() + ". Model: " + model.toUpperCase() + "";
-                this.messages = this.addMessage(this.messages, responseMessage, 'info');
+                let prediction = response.data.toString();
+                // let responseMessage = this.get_string_message_for_file(filename, section, severity);
+                let responseMessage = model.toUpperCase()+" : " + prediction.toUpperCase();
+
+                if(prediction === label){
+                    responseMessage += " 👍"
+                    this.messages = this.addMessage(this.messages, responseMessage, 'info');
+                }else{
+                    responseMessage += " 👎"
+                    this.messages = this.addMessage(this.messages, responseMessage, 'danger');
+                }
+
 
             }).catch(error => {
                 console.log("ERROR: ", error);
@@ -193,10 +203,10 @@ export default {
             data.append("obfuscation", obfuscation.toLowerCase());
             data.append("severity", obf_severity);
 
-            let requestMessage = "Requested obfuscation for ";
-            requestMessage += this.get_string_message_for_file(filename, section, severity);
-            requestMessage += ". Technique: " + obfuscation.toUpperCase() + "";
-            this.messages = this.addMessage(this.messages, requestMessage, 'success');
+            // let requestMessage = "Requested obfuscation for ";
+            // requestMessage += this.get_string_message_for_file(filename, section, severity);
+            // requestMessage += ". Technique: " + obfuscation.toUpperCase() + "";
+            // this.messages = this.addMessage(this.messages, requestMessage, 'success');
 
             axios({
                 method: 'post',
@@ -205,9 +215,8 @@ export default {
             }).then(() => {
                 this.fileUploaded = null;
                 this.$refs.filesComponent.getAllFilesInTheWorkSpace();
-                let responseMessage = "Response ready\n"
-                responseMessage += this.get_string_message_for_file(filename, section, severity);
-                responseMessage += " obfuscated. Technique: " + obfuscation.toUpperCase() + "";
+                let responseMessage = this.get_string_message_for_file(filename, section, severity);
+                responseMessage += " obfuscated";
                 this.messages = this.addMessage(this.messages, responseMessage, 'info');
 
             }).catch(error => {
@@ -215,11 +224,16 @@ export default {
             });
         },
         get_string_message_for_file(filename, section, severity) {
-            let message = "[" + section.toUpperCase() + "]";
-            if (severity !== null) {
-                message += "[" + severity.toUpperCase() + "]";
+            let today = new Date();
+            let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+            if(section === 'original'){
+                section = 'your files';
             }
-            message += "[" + filename.toUpperCase() + "]"
+            let message = time+"   [ " + section.toUpperCase() + " ]";
+            if (severity !== null) {
+                message += "[ " + severity.toUpperCase() + " ]";
+            }
+            message += "[ " + filename.toUpperCase() + " ]"
             return message
 
         },

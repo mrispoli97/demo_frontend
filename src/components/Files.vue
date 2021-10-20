@@ -2,6 +2,24 @@
     <b-row>
         <b-col>
             <b-card-title style="margin-top: 25px; margin-bottom: 25px"><b>YOUR FILES</b></b-card-title>
+            <b-row v-if="originalFiles.length === 0">
+                <b-col>
+                    <b-card-text>
+                        <p>
+                            This is the <b>FILE</b> section of your <b>Work Space</b><br>
+
+                        </p>
+
+                        <p style="text-align: left">
+                            FEATURES: <br><br>
+
+                            💡 CLASSIFY malware using <b>AI</b><br>
+                            🎨 OBFUSCATE and fool your <b>ANTIVIRUS</b>
+                        </p>
+                    </b-card-text>
+
+                </b-col>
+            </b-row>
             <b-row style="margin-top: 25px; margin-bottom: 25px">
                 <b-col v-if="originalFiles.length > 0" style="display: flex; justify-content: center">
                     <File v-for="file in originalFiles" :key="file.filename" style="margin: 4px"
@@ -37,10 +55,10 @@
                         <b-form-file
                             v-model="fileUploaded"
                             :state="Boolean(fileUploaded)"
-                            placeholder="Choose a file or drop it here..."
-                            drop-placeholder="Drop file here..."
+                            placeholder="Choose a Malware or drop it here..."
+                            drop-placeholder="Drop your Malware here..."
                         ></b-form-file>
-                        <div class="mt-3">Selected file: {{ fileUploaded ? fileUploaded.name : '' }}</div>
+                        <div class="mt-3" v-if="Boolean(fileUploaded)">Selected file: {{ fileUploaded ? fileUploaded.name : '' }}</div>
                     </div>
                     <FocusButton
                         v-if="Boolean(fileUploaded)"
@@ -186,7 +204,7 @@ export default {
                 if (file.id === identifier) {
                     file.isActive = true;
                     fileSelected = file;
-                }else{
+                } else {
                     file.isActive = false;
                 }
 
@@ -198,7 +216,7 @@ export default {
                         if (file.id === identifier) {
                             file.isActive = true;
                             fileSelected = file;
-                        }else{
+                        } else {
                             file.isActive = false;
                         }
                     })
@@ -229,8 +247,6 @@ export default {
                 }
             });
             return severityToShow;
-
-
         }
     }
 }
