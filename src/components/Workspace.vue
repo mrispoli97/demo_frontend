@@ -239,8 +239,8 @@ export default {
         },
         addMessage(messages, message, variant) {
 
-            if (messages.length > 1) {
-                messages = messages.slice(messages.length - 1, 2);
+            if (messages.length > 2) {
+                messages = messages.slice(messages.length - 2, messages.length);
             }
             messages.push({
                 'text': message,

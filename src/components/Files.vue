@@ -60,7 +60,7 @@
                         ></b-form-file>
                         <div class="mt-3" v-if="Boolean(fileUploaded)">Selected file: {{ fileUploaded ? fileUploaded.name : '' }}</div>
                     </div>
-                    <FocusButton
+                    <FocusButton style="margin-left: 30px"
                         v-if="Boolean(fileUploaded)"
                         name="uploadFileButton"
                         color="#2dc653"
